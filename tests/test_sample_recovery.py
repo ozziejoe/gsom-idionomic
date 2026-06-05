@@ -8,11 +8,36 @@ warnings.filterwarnings("ignore")
 
 import pandas as pd
 
-from gsom_idionomic import GsomConfig, build_map, cluster_map
-from gsom_idionomic.demo import make_sample_dataset, sample_legend, SAMPLE_RECOMMENDED
+from gsom_idionomic import (
+    GsomConfig, build_map, cluster_map, make_zoo_dataset,
+)
+from gsom_idionomic.demo import (
+    make_sample_dataset, sample_legend, SAMPLE_RECOMMENDED, ZOO_RECOMMENDED,
+)
+
+
+def run_zoo():
+    df = make_zoo_dataset()
+    assert df.shape == (101, 17), df.shape
+    truth = df.attrs["true_class"]
+    cfg = GsomConfig(sil_cut=ZOO_RECOMMENDED["sil_cut"])
+    m = build_map(df, cfg, spread=ZOO_RECOMMENDED["spread"])
+    c = cluster_map(m, cfg, k=ZOO_RECOMMENDED["k"])
+    assert c.best_k == 5 and len(c.valid_clusters) == 5, (c.best_k, c.valid_clusters)
+    assert int((c.df_clusters["cluster"] == -1).sum()) == 0, "expected 0 outliers"
+    cl = c.df_clusters.copy()
+    cl["klass"] = cl["ID"].map(truth)
+    ct = pd.crosstab(cl["klass"], cl["cluster"])
+    # all mammals together, all fish together (the headline pure groups)
+    assert (ct.loc["Mammal"].max() == 41), f"mammals not pure:\n{ct}"
+    assert (ct.loc["Fish"].max() == 13), f"fish not pure:\n{ct}"
+    print("Zoo recovery (animal class x cluster):")
+    print(ct.to_string())
+    print("ZOO PASSED\n")
 
 
 def run():
+    run_zoo()
     df = make_sample_dataset()
     assert df.shape[0] == 80, df.shape
     assert sum(c.startswith("beta_") for c in df.columns) == 12

@@ -57,6 +57,75 @@ def plot_spread_tuning(df_spread, best_spread):
     return fig
 
 
+# ------------------------------------------------------- map (no clustering)
+def plot_node_map(gsom_map, df_map, max_label_ids=2):
+    """The trained GSOM map itself — no clustering required (Step 1).
+
+    Shows the growth skeleton (parent→child edges), seed nodes (★), empty nodes
+    (grey), and winner nodes shaded by how many IDs landed there. Useful on its
+    own: nearby nodes hold similar rows. Optionally labels the lightest-occupied
+    nodes with a couple of their IDs.
+    """
+    hit_counts = df_map.groupby("output")["ID"].nunique().to_dict()
+    ids_by_node = df_map.groupby("output")["ID"].apply(list).to_dict()
+
+    df_sk = gsom_map.skeleton_dataframe()
+    df_sk["x"] = pd.to_numeric(df_sk["x"], errors="coerce")
+    df_sk["y"] = pd.to_numeric(df_sk["y"], errors="coerce")
+    df_sk["x_int"] = np.rint(df_sk["x"]).astype("Int64")
+    df_sk["y_int"] = np.rint(df_sk["y"]).astype("Int64")
+
+    # node id at each integer coordinate (from the live map)
+    coord_to_node = {(int(x), int(y)): idx for (x, y), idx in gsom_map.map.items()}
+    df_sk["nodeid"] = [coord_to_node.get((int(x), int(y))) if pd.notna(x) and pd.notna(y)
+                       else None for x, y in zip(df_sk["x_int"], df_sk["y_int"])]
+    df_sk["n_people"] = df_sk["nodeid"].map(hit_counts).fillna(0).astype(int)
+
+    parents = df_sk[["nodeid_tree", "x_int", "y_int"]].rename(
+        columns={"nodeid_tree": "parent_id", "x_int": "parent_x", "y_int": "parent_y"})
+    edges = (df_sk[["parent_id", "x_int", "y_int"]]
+             .rename(columns={"x_int": "child_x", "y_int": "child_y"})
+             .merge(parents, on="parent_id", how="left")
+             .dropna(subset=["parent_x", "parent_y"]))
+
+    roots = df_sk[df_sk["parent_id"].isna()]["nodeid_tree"]
+    root_id = roots.iloc[0] if len(roots) else None
+    seed_ids = df_sk[df_sk["parent_id"] == root_id]["nodeid_tree"].tolist() if root_id else []
+    seeds = df_sk[df_sk["nodeid_tree"].isin(seed_ids)]
+
+    fig, ax = plt.subplots(figsize=(11, 8))
+    for _, row in edges.iterrows():
+        ax.plot([row["child_x"], row["parent_x"]], [row["child_y"], row["parent_y"]],
+                color="grey", linewidth=0.8, alpha=0.5, zorder=1)
+
+    empty = df_sk[df_sk["n_people"] == 0]
+    ax.scatter(empty["x_int"], empty["y_int"], s=18, facecolors="none",
+               edgecolors="grey", linewidth=0.8, alpha=0.4, zorder=2)
+
+    winners = df_sk[df_sk["n_people"] > 0]
+    sc = ax.scatter(winners["x_int"], winners["y_int"], s=160,
+                    c=winners["n_people"], cmap="viridis",
+                    edgecolor="black", linewidth=0.6, zorder=3)
+    fig.colorbar(sc, ax=ax, label="IDs on node", shrink=0.7)
+
+    for _, row in winners.iterrows():
+        ax.annotate(f"{int(row['n_people'])}", xy=(row["x_int"], row["y_int"]),
+                    xytext=(7, 0), textcoords="offset points", fontsize=8,
+                    ha="left", va="center", zorder=4,
+                    path_effects=[pe.Stroke(linewidth=2, foreground="white"), pe.Normal()])
+
+    if not seeds.empty:
+        ax.scatter(seeds["x_int"], seeds["y_int"], s=200, marker="*",
+                   facecolors="white", edgecolors="black", linewidth=1.5, zorder=5)
+
+    ax.set_xticks([]); ax.set_yticks([])
+    ax.set_title("GSOM map — growth skeleton, seed nodes (★), shaded by node "
+                 "occupancy\n(nearby nodes hold similar rows · no clustering yet)",
+                 fontsize=12, fontweight="bold")
+    fig.tight_layout()
+    return fig
+
+
 # ---------------------------------------------------------------- cluster map
 def plot_cluster_map(df_active, df_map):
     """Color map of participant placement; empty nodes grey, winners coloured by cluster."""

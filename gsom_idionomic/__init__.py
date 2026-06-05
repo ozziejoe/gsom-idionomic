@@ -26,7 +26,10 @@ from .pipeline import (
     cluster_map,
     shorten_feature,
 )
-from .demo import make_demo_features, make_sample_dataset, sample_legend
+from .demo import (
+    make_demo_features, make_sample_dataset, sample_legend,
+    make_zoo_dataset, zoo_truth,
+)
 
 __version__ = "0.1.0"
 
@@ -45,5 +48,7 @@ __all__ = [
     "make_demo_features",
     "make_sample_dataset",
     "sample_legend",
+    "make_zoo_dataset",
+    "zoo_truth",
     "__version__",
 ]

@@ -31,8 +31,48 @@ The four types (2x2 over A and B):
 ``make_demo_features`` is a lighter generic generator kept for tests / quick checks.
 """
 
+import io
+
 import numpy as np
 import pandas as pd
+
+from ._zoo_data import ZOO_CSV
+
+
+# ============================================================================
+# Zoo dataset -- the headline, intuitive example (NOT idionomic).
+# 101 animals x 16 traits; the GSOM groups them into animal kinds.
+# ============================================================================
+ZOO_FEATURES = ["hair", "feathers", "eggs", "milk", "airborne", "aquatic",
+                "predator", "toothed", "backbone", "breathes", "venomous",
+                "fins", "legs", "tail", "domestic", "catsize"]
+
+# Settings under which the GSOM cleanly groups the animals (0 outliers).
+ZOO_RECOMMENDED = {"spread": 0.4, "k": 5, "sil_cut": 0.10}
+
+
+def make_zoo_dataset():
+    """Return the UCI Zoo feature matrix: ``ID`` (animal) + 16 trait columns.
+
+    ``legs`` is scaled to [0, 1] so it is comparable to the boolean traits. The
+    true animal class is NOT a feature; it is stashed in ``df.attrs['true_class']``
+    (``{animal: class}``) for the recovery cross-tab, with ``df.attrs['legend']``
+    and ``df.attrs['name']``.
+    """
+    raw = pd.read_csv(io.StringIO(ZOO_CSV))
+    truth = dict(zip(raw["ID"], raw["class"]))
+    df = raw[["ID"] + ZOO_FEATURES].copy()
+    df["legs"] = df["legs"] / 8.0  # {0,2,4,5,6,8} -> [0,1]
+    df.attrs["true_class"] = truth
+    df.attrs["legend"] = {c: c for c in sorted(set(truth.values()))}
+    df.attrs["name"] = "Zoo animals"
+    return df
+
+
+def zoo_truth():
+    """Return {animal: class} ground truth for the zoo sample."""
+    raw = pd.read_csv(io.StringIO(ZOO_CSV))
+    return dict(zip(raw["ID"], raw["class"]))
 
 
 PREDICTORS = ["Pain", "Sleep", "Stress", "Social"]
@@ -124,6 +164,8 @@ def make_sample_dataset(n_per_type=20, seed=SAMPLE_SEED,
     df = pd.DataFrame(data)
     df.attrs["legend"] = {p: s["label"] for p, s in TYPES.items()}
     df.attrs["true_type"] = labels
+    df.attrs["true_class"] = dict(zip(ids, labels))   # {ID: designed-type label}
+    df.attrs["name"] = "Idionomic EMA"
     return df
 
 

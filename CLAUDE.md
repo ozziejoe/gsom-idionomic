@@ -20,18 +20,25 @@ source of truth).
     0.3/0.3/0.4 weighting or any `best_silhouette`/`w_cluster` in Step 1 — clustering
     quality belongs to Step 2 (`cluster_map`) and is judged via within-cluster I².
   - `plots.py` — one Matplotlib figure per function, no global state (stlite-safe).
-  - `demo.py` — `make_sample_dataset()`: the headline **4-type sample** (80 people,
-    2×2 factorial of "somatic" × "psychosocial" signatures → types SOM/PSY/DUO/RES,
-    type encoded in ID prefix). `SAMPLE_RECOMMENDED = {spread 0.6, k 4, sil_cut 0.10}`
-    gives a clean **block-diagonal recovery, 0 outliers** (seed 7, noise 0.10).
-    NOTE: auto-spread/auto-K does NOT reliably recover 4 here (auto-spread picks
-    0.9 → over-grows); that's why the sample ships with recommended settings, which
-    the app pre-loads. `make_demo_features()` (generic 3-type) kept for misc tests.
+    `plot_node_map(gsom_map, df_map)` = the Step-1 map WITHOUT clustering (skeleton
+    + seed stars + nodes shaded by occupancy).
+  - `demo.py` — two built-in samples, each sets `df.attrs['true_class']={ID:label}`
+    + `df.attrs['name']`:
+    • **`make_zoo_dataset()`** — HEADLINE example (UCI Zoo, embedded in `_zoo_data.py`):
+      101 animals × 16 traits (legs scaled /8), `ZOO_RECOMMENDED={spread 0.4,k 5,
+      sil_cut 0.10}` → K=5, 0 outliers, mammals & fish pure. Shows "any features by ID".
+    • **`make_sample_dataset()`** — idionomic EMA 2×2 (SOM/PSY/DUO/RES),
+      `SAMPLE_RECOMMENDED={spread 0.6,k 4,sil_cut 0.10}`, has `se_` so I² panel shows.
+    NOTE: auto-spread/auto-K is unreliable for clean recovery (auto-spread tends high
+    → over-grows); both samples ship with recommended settings the app pre-loads.
+    `make_demo_features()` (generic 3-type) kept for misc tests.
 - `app.py` — Streamlit two-step wizard (tabs ① Build map / ② Cluster map). Uses
-  `st.session_state` keys `data/map/cluster`; rebuilding the map nulls `cluster`.
-  Widget values live under `w_*` session keys (so "Use sample data" can pre-load
-  the recommended settings); set them BEFORE the widgets instantiate, never after.
-  When `is_sample`, Step 2 shows a designed-type × cluster recovery cross-tab.
+  `st.session_state` keys `data/map/cluster/is_sample/sample_truth/sample_blurb`;
+  rebuilding the map nulls `cluster`. Sidebar `SAMPLES` registry → selectbox picks
+  zoo/EMA; loading stashes `sample_truth` (= `df.attrs['true_class']`). Widget values
+  live under `w_*` session keys (pre-loaded per sample); set them BEFORE the widgets
+  instantiate, never after. Step 1 shows `plot_node_map` (map, no clustering); when
+  `is_sample`, Step 2 shows a known-group × cluster recovery cross-tab.
 - `index.html` + `netlify.toml` — **stlite** in-browser build (Pyodide). Data never
   leaves the browser. Headers set COOP/COEP for Pyodide.
 - `GSOM_Idionomic_Colab.ipynb` — form-driven Colab that `pip install`s the package.

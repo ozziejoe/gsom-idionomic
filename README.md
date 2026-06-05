@@ -44,19 +44,23 @@ add matching `se_<…>` standard-error columns. The `beta_`/`se_` naming gives n
 labels and the `se_` columns unlock the **I² / homogeneity-gain** panel. Without it,
 everything still works — the I² panel is simply skipped.
 
-Don't have data handy? Click **Use sample data** in the app, or:
+Don't have data handy? The app ships with two built-in examples (sidebar →
+**Sample dataset**):
+
+- **🦓 Zoo animals** — the classic UCI Zoo set: 101 animals × 16 traits. Given no
+  labels, the GSOM groups them into natural kinds (mammals, fish, birds, bugs…) —
+  a clear demo that this works on *any* features by ID, not just idionomic data.
+- **🧠 Idionomic EMA** — 80 simulated people × within-person β coefficients in a 2×2
+  of person-types; also demonstrates the **I²** homogeneity panel.
+
+Each loads its recommended settings automatically. From Python:
 
 ```python
-from gsom_idionomic import make_sample_dataset
-make_sample_dataset().to_csv("sample_feature_matrix.csv", index=False)
+from gsom_idionomic import make_zoo_dataset, make_sample_dataset
+make_zoo_dataset().to_csv("zoo_feature_matrix.csv", index=False)
 ```
 
-The bundled example ([`sample_data/sample_feature_matrix.csv`](sample_data/sample_feature_matrix.csv))
-is **80 people from four interpretable person-types**, laid out as a 2×2 of two
-within-person "signatures" (somatic vs psychosocial). With its recommended
-settings (**spread 0.6, K 4, cutoff 0.10** — loaded automatically by *Use sample
-data*) the GSOM recovers all four types as a clean block-diagonal. Details:
-[`sample_data/README.md`](sample_data/README.md).
+See [`sample_data/`](sample_data/) for both CSVs and details.
 
 ---
 

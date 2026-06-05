@@ -1,4 +1,26 @@
-# Sample dataset — `sample_feature_matrix.csv`
+# Sample datasets
+
+Two built-in examples ship with the app (sidebar → **Sample dataset**).
+
+## 1. `zoo_feature_matrix.csv` — the headline example 🦓
+
+The classic **UCI Zoo** dataset: **101 animals × 16 traits** (`hair`, `feathers`,
+`eggs`, `milk`, `airborne`, `aquatic`, `predator`, `toothed`, `backbone`,
+`breathes`, `venomous`, `fins`, `legs`, `tail`, `domestic`, `catsize`). `legs` is
+scaled to [0, 1]; everything else is 0/1. `ID` is the animal name.
+
+The GSOM is given **no labels** — it groups animals purely by their traits, and
+they fall into natural kinds. With the recommended settings (**spread 0.4, K 5,
+outlier cutoff 0.10**) you get a clean grouping with **0 outliers**: all 41
+mammals in one cluster, all fish in another, birds, and a "bugs & amphibians"
+group. The true animal class for each ID is in
+[`zoo_classes.csv`](zoo_classes.csv) (used only for the recovery cross-tab; it is
+**not** a feature). This example shows the tool works on *any* feature-by-ID
+matrix — not just idionomic data.
+
+Source: UCI Machine Learning Repository, *Zoo* data set (R. Forsyth), public domain.
+
+## 2. `sample_feature_matrix.csv` — idionomic example 🧠
 
 A small, **interpretable** idionomic feature matrix: **80 simulated people** from
 **four person-types**, designed so the GSOM pipeline cleanly recovers the groups.

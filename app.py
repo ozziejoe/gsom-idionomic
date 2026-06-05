@@ -22,9 +22,31 @@ import streamlit as st
 
 from gsom_idionomic import GsomConfig, build_map, cluster_map
 from gsom_idionomic.demo import (
-    make_sample_dataset, sample_legend, SAMPLE_RECOMMENDED,
+    make_sample_dataset, make_zoo_dataset, SAMPLE_RECOMMENDED, ZOO_RECOMMENDED,
 )
 from gsom_idionomic import plots
+
+# Built-in sample datasets: label -> loader, recommended settings, blurb.
+SAMPLES = {
+    "🦓 Zoo animals (101 animals × 16 traits → animal kinds)": {
+        "loader": make_zoo_dataset,
+        "rec": ZOO_RECOMMENDED,
+        "blurb": (
+            "The classic **UCI Zoo** dataset — 101 animals described by 16 traits "
+            "(hair, feathers, eggs, milk, fins, legs, …). No labels are given to "
+            "the GSOM; it groups the animals purely by their traits, and they fall "
+            "into natural kinds — **mammals, fish, birds, bugs & amphibians**. "
+            "A nice demo that this works on *any* features, not just idionomic data."),
+    },
+    "🧠 Idionomic EMA (people × within-person betas → person-types, shows I²)": {
+        "loader": make_sample_dataset,
+        "rec": SAMPLE_RECOMMENDED,
+        "blurb": (
+            "80 simulated people from **four person-types** (a 2×2 of somatic vs "
+            "psychosocial within-person dynamics). Includes `se_*` columns, so this "
+            "one also shows the **homogeneity-gain (I²)** defensibility panel."),
+    },
+}
 
 st.set_page_config(page_title="GSOM Idionomic Clustering",
                    page_icon="🗺️", layout="wide")
@@ -102,6 +124,8 @@ def _build_zip(m, c, cfg, se_cols):
 for key in ("data", "data_name", "map", "cluster"):
     st.session_state.setdefault(key, None)
 st.session_state.setdefault("is_sample", False)
+st.session_state.setdefault("sample_truth", {})
+st.session_state.setdefault("sample_blurb", "")
 
 # Widget values live in session_state under these keys so we can pre-set them
 # (e.g. load the sample's recommended settings). Defaults = the real-data defaults.
@@ -131,29 +155,37 @@ up = st.sidebar.file_uploader(
     "Feature matrix CSV", type=["csv"],
     help="One row per unit. An ID column plus any numeric feature columns. "
          "(The beta_* / se_* idionomic naming is optional and unlocks the I² panel.)")
+st.sidebar.caption("— or try a built-in example —")
+sample_choice = st.sidebar.selectbox("Sample dataset", list(SAMPLES.keys()),
+                                     label_visibility="collapsed")
 col_a, col_b = st.sidebar.columns(2)
 if col_a.button("Use sample data", use_container_width=True):
-    st.session_state.data = make_sample_dataset()
-    st.session_state.data_name = "sample_feature_matrix.csv"
+    spec = SAMPLES[sample_choice]
+    df_loaded = spec["loader"]()
+    st.session_state.data = df_loaded
+    st.session_state.data_name = df_loaded.attrs.get("name", "sample")
     st.session_state.is_sample = True
+    st.session_state.sample_truth = dict(df_loaded.attrs.get("true_class", {}))
+    st.session_state.sample_blurb = spec["blurb"]
     st.session_state.map = None
     reset_downstream()
-    # pre-load the settings under which the sample recovers its four types cleanly
-    set_widgets({"w_spread_mode": "Hand-choose",
-                 "w_hand_spread": SAMPLE_RECOMMENDED["spread"],
-                 "w_k_mode": "Hand-choose",
-                 "w_hand_k": SAMPLE_RECOMMENDED["k"],
-                 "w_sil_cut": SAMPLE_RECOMMENDED["sil_cut"]})
+    # pre-load the settings under which this sample recovers its groups cleanly
+    rec = spec["rec"]
+    set_widgets({"w_spread_mode": "Hand-choose", "w_hand_spread": rec["spread"],
+                 "w_k_mode": "Hand-choose", "w_hand_k": rec["k"],
+                 "w_sil_cut": rec["sil_cut"]})
 if col_b.button("Clear", use_container_width=True):
     for k in ("data", "data_name", "map", "cluster"):
         st.session_state[k] = None
     st.session_state.is_sample = False
+    st.session_state.sample_truth = {}
     set_widgets(WIDGET_DEFAULTS)
 
 if up is not None:
     st.session_state.data = pd.read_csv(up)
     st.session_state.data_name = up.name
     st.session_state.is_sample = False
+    st.session_state.sample_truth = {}
     st.session_state.map = None
     reset_downstream()
 
@@ -178,19 +210,17 @@ st.markdown(
     "people, features = within-person coefficients — but works on any numeric features.)")
 
 if st.session_state.data is None:
-    st.info("⬅️ Upload a feature-matrix CSV or click **Use sample data** to begin.")
-    with st.expander("📦 What's in the sample data?", expanded=True):
+    st.info("⬅️ Pick a **sample dataset** in the sidebar and click **Use sample "
+            "data**, or upload your own CSV, to begin.")
+    with st.expander("📦 Two built-in examples to try", expanded=True):
         st.markdown(
-            "80 simulated people from **four person-types**, laid out as a 2×2 of "
-            "two within-person 'signatures' — so the GSOM recovers four clean groups:\n\n"
-            "| Type (ID prefix) | What drives their day |\n"
-            "|---|---|\n"
-            "| **SOM** — Somatic | pain & sleep dominate (pain → worse mood, more interference) |\n"
-            "| **PSY** — Psychosocial | stress & social connection dominate |\n"
-            "| **DUO** — Dual-burden | both somatic *and* psychosocial |\n"
-            "| **RES** — Resilient | weakly coupled — a 'flat' responder |\n\n"
-            "Each person's type is encoded in their `ID` (e.g. `SOM03`), so after "
-            "clustering you can see the four designed groups come back.")
+            "- **🦓 Zoo animals** — 101 animals × 16 traits. The GSOM groups them "
+            "into natural kinds (mammals, fish, birds, bugs…) from traits alone. "
+            "A great show of *any features by ID*.\n"
+            "- **🧠 Idionomic EMA** — 80 people × within-person β coefficients in a "
+            "2×2 of person-types; also demonstrates the **I²** defensibility panel.\n\n"
+            "Choose one in the sidebar, click **Use sample data**, then **Build "
+            "map** → **Cluster map** — its recommended settings load automatically.")
     with st.expander("What should my own CSV look like?"):
         st.markdown(
             "- One **row per unit** (person, site, case…).\n"
@@ -221,10 +251,11 @@ with tab1:
     st.subheader("Step 1 — Build & tune the map")
 
     if st.session_state.is_sample:
-        st.success("📌 **Sample data loaded** with its recommended settings "
-                   "(spread 0.6, K 4, outlier cutoff 0.10). Just click **Build "
-                   "map**, then **Cluster map** — the four designed person-types "
-                   "come back cleanly.")
+        st.success("📌 **Sample loaded** with its recommended settings pre-filled. "
+                   "Just click **Build map**, then (optionally) **Cluster map** — "
+                   "the natural groups come back cleanly.")
+        if st.session_state.sample_blurb:
+            st.caption(st.session_state.sample_blurb)
 
     left, right = st.columns([1, 2])
     with left:
@@ -286,6 +317,12 @@ with tab1:
                 show_fig(plots.plot_spread_tuning(m.df_spread, m.spread))
                 with st.expander("Spread sweep table"):
                     st.dataframe(m.df_spread_scored.round(3))
+
+        # the map itself — useful on its own, no clustering required
+        st.markdown("#### The GSOM map")
+        st.caption("Each circle is a node; nearby nodes hold similar rows. "
+                   "Shade = how many of your IDs landed there. ★ = seed nodes.")
+        show_fig(plots.plot_node_map(m.gsom_map, m.df_map))
 
         # node locations / counts table
         st.markdown("#### Node locations & counts")
@@ -359,17 +396,18 @@ with tab2:
                         f"outliers: {int((c.df_clusters['cluster'] == -1).sum())}")
             st.bar_chart(counts)
 
-        # For the sample, show that GSOM recovered the four designed types.
-        if st.session_state.is_sample:
-            legend = sample_legend()
+        # For a sample with known labels, show how the GSOM groups recover them.
+        truth = st.session_state.get("sample_truth", {})
+        if st.session_state.is_sample and truth:
             xt = c.df_clusters.copy()
-            xt["Designed type"] = xt["ID"].str[:3].map(legend)
+            xt["Known group"] = xt["ID"].map(truth)
+            xt = xt.dropna(subset=["Known group"])
             xt["Cluster"] = xt["cluster"].map(
                 lambda i: "Outliers" if i == -1 else f"Cluster {i}")
-            recovery = pd.crosstab(xt["Designed type"], xt["Cluster"])
-            st.markdown("#### ✅ Recovery check — designed type × GSOM cluster")
-            st.caption("Each designed person-type should land in its own cluster "
-                       "(a clean block-diagonal = perfect recovery).")
+            recovery = pd.crosstab(xt["Known group"], xt["Cluster"])
+            st.markdown("#### ✅ Recovery check — known group × GSOM cluster")
+            st.caption("The GSOM never saw these labels. Each known group landing "
+                       "mostly in its own cluster = the map found the real structure.")
             st.dataframe(recovery, use_container_width=True)
 
         st.markdown("#### Skeleton map with cluster topology")
