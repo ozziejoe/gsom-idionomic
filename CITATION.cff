@@ -1,10 +1,26 @@
 cff-version: 1.2.0
-title: "gsom-idionomic: Growing Self-Organizing Map clustering for idionomic analysis"
-message: "If you use this software, please cite it as below."
+title: "gsom-idionomic: Growing Self-Organizing Map clustering for any feature-by-ID matrix"
+message: "If you use this software, please cite both the software (below) and the accompanying paper in 'preferred-citation'."
 type: software
 authors:
-  - family-names: Ciarrochi
-    given-names: Joseph
+  - given-names: Joseph
+    family-names: Ciarrochi
+    affiliation: "Institute of Positive Psychology and Education, Australian Catholic University"
+    orcid: "https://orcid.org/0000-0003-0471-8100"
+  - given-names: Damminda
+    family-names: Alahakoon
+    affiliation: "Centre for Data Analytics and Cognition, La Trobe University"
+  - given-names: "Cristóbal Eduardo"
+    family-names: "Hernández Contreras"
+    affiliation: "Escuela de Psicología, Universidad Adolfo Ibáñez"
+  - given-names: Baljinder
+    family-names: Sahdra
+    affiliation: "Institute of Positive Psychology and Education, Australian Catholic University"
+  - given-names: Clarissa
+    family-names: Ong
+  - given-names: "Steven C."
+    family-names: Hayes
+    affiliation: "Department of Psychology, University of Nevada, Reno"
 version: 0.1.0
 license: MIT
 repository-code: "https://github.com/ozziejoe/gsom-idionomic"
@@ -25,3 +41,36 @@ keywords:
   - person-specific
   - ecological momentary assessment
   - clustering
+preferred-citation:
+  type: article
+  title: "Is problematic internet use always problematic? An experience-sampling study of compulsive and avoidance-driven internet behaviors and momentary mood"
+  authors:
+    - given-names: Joseph
+      family-names: Ciarrochi
+    - given-names: Cristóbal
+      family-names: Hernández
+    - given-names: Eman
+      family-names: Hamed
+    - given-names: Damminda
+      family-names: Alahakoon
+    - given-names: Achini
+      family-names: Adikari
+    - given-names: Keong
+      family-names: Yap
+    - given-names: Isuru
+      family-names: Ranapanada
+    - given-names: "Steven C."
+      family-names: Hayes
+    - given-names: "Madeleine I."
+      family-names: Fraser
+    - given-names: Baljinder
+      family-names: Sahdra
+  journal: "Psychology of Addictive Behaviors"
+  year: 2026
+  volume: 40
+  issue: 4
+  start: 422
+  end: 431
+  doi: "10.1037/adb0001142"
+  issn: "0893-164X"
+  license: CC-BY-4.0

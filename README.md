@@ -155,10 +155,23 @@ pip install -e .
 python tests/test_app_flow.py        # headless end-to-end check
 ```
 
+## Authors
+
+Joseph Ciarrochi, Damminda Alahakoon, Cristóbal Eduardo Hernández Contreras,
+Baljinder Sahdra, Clarissa Ong, and Steven C. Hayes.
+
 ## Citing
 
-If you use this in research, please cite it (see [`CITATION.cff`](CITATION.cff)).
-A Zenodo DOI will be minted from the first GitHub release.
+If you use this software, please cite the package (see [`CITATION.cff`](CITATION.cff);
+a Zenodo DOI will be minted from the first release) **and** the accompanying paper:
+
+> Ciarrochi, J., Hernández, C., Hamed, E., Alahakoon, D., Adikari, A., Yap, K.,
+> Ranapanada, I., Hayes, S. C., Fraser, M. I., & Sahdra, B. (2026). Is problematic
+> internet use always problematic? An experience-sampling study of compulsive and
+> avoidance-driven internet behaviors and momentary mood. *Psychology of Addictive
+> Behaviors, 40*(4), 422–431. https://doi.org/10.1037/adb0001142
+
+The paper is **Open Access (CC BY 4.0)** and bundled in [`paper/`](paper/).
 
 ## License
 

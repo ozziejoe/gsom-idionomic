@@ -9,7 +9,14 @@ description = "Growing Self-Organizing Map (GSOM) clustering for idionomic analy
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "Joseph Ciarrochi" }]
+authors = [
+    { name = "Joseph Ciarrochi", email = "jociarrochi@acu.edu.au" },
+    { name = "Damminda Alahakoon" },
+    { name = "Cristóbal Eduardo Hernández Contreras" },
+    { name = "Baljinder Sahdra" },
+    { name = "Clarissa Ong" },
+    { name = "Steven C. Hayes" },
+]
 keywords = ["GSOM", "self-organizing-map", "idionomic", "clustering",
             "EMA", "psychology", "person-specific"]
 classifiers = [
