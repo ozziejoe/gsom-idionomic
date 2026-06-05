@@ -249,6 +249,13 @@ tab1, tab2 = st.tabs(["① Build map", "② Cluster map"])
 
 with tab1:
     st.subheader("Step 1 — Build & tune the map")
+    st.markdown(
+        "This step trains the Growing Self-Organizing Map: a grid of *nodes* that "
+        "grows to fit your data, placing similar rows near each other. You choose "
+        "the **spread factor** (how readily the map grows), and the map is scored "
+        "purely on how well it fits — quantization error and topology preservation. "
+        "The result is a 2-D map of your rows. *No clustering happens here* — that's "
+        "the optional Step 2.")
 
     if st.session_state.is_sample:
         st.success("📌 **Sample loaded** with its recommended settings pre-filled. "
@@ -314,18 +321,26 @@ with tab1:
                         f"**active nodes:** {m.n_nodes}  ·  "
                         f"**winner nodes:** {m.n_winner_nodes}")
             if m.df_spread is not None:
+                st.caption("**Spread diagnostic.** Auto mode tried a range of spread "
+                           "values; each was scored on map fit (lower quantization "
+                           "error, higher topology preservation). The red line marks "
+                           "the chosen spread. Map size is shown but not used to choose.")
                 show_fig(plots.plot_spread_tuning(m.df_spread, m.spread))
                 with st.expander("Spread sweep table"):
                     st.dataframe(m.df_spread_scored.round(3))
 
         # the map itself — useful on its own, no clustering required
         st.markdown("#### The GSOM map")
-        st.caption("Each circle is a node; nearby nodes hold similar rows. "
-                   "Shade = how many of your IDs landed there. ★ = seed nodes.")
+        st.caption("The trained map itself — useful on its own. Each circle is a "
+                   "node; nearby nodes hold similar rows. Shade = how many of your "
+                   "IDs landed on a node. ★ = the original seed nodes the map grew from.")
         show_fig(plots.plot_node_map(m.gsom_map, m.df_map))
 
         # node locations / counts table
         st.markdown("#### Node locations & counts")
+        st.caption("The underlying numbers behind the map: each node's grid "
+                   "position and how many of your IDs it holds. Download below to "
+                   "join node assignments back to your data.")
         node_counts = (m.df_map.groupby(["output", "x", "y"])["ID"]
                        .nunique().reset_index(name="n_people")
                        .rename(columns={"output": "nodeid"}))
@@ -346,6 +361,13 @@ with tab1:
 # =================================================================== STEP 2 TAB
 with tab2:
     st.subheader("Step 2 — Cluster the map (optional)")
+    st.markdown(
+        "Now group the map into a handful of clusters. K-means runs over the **map "
+        "coordinates** (not your raw features), so it groups *regions* of the map; "
+        "nodes that fit their cluster poorly are flagged as outliers. You pick the "
+        "number of clusters **K** and the outlier cutoff. The rest of this tab then "
+        "characterises each cluster — what makes it distinct, and (for idionomic "
+        "data with `se_`) how much it sharpens heterogeneity.")
     if st.session_state.map is None:
         st.warning("Build a map in Step 1 first.")
         st.stop()
@@ -441,6 +463,9 @@ with tab2:
             st.dataframe(recovery, use_container_width=True)
 
         st.markdown("#### Skeleton map with cluster topology")
+        st.caption("The map's actual growth structure (parent→child edges, seed "
+                   "nodes ★), with each cluster ringed and labelled. Shows how the "
+                   "clusters sit relative to one another on the map.")
         show_fig(plots.plot_skeleton_map(m.gsom_map, c.df_active, m.df_map,
                                          c.df_profiles, cfg2.id_col,
                                          cluster_labels=cluster_labels))
@@ -448,17 +473,27 @@ with tab2:
         cmap_col, sil_col = st.columns(2)
         with cmap_col:
             st.markdown("#### Cluster map")
+            st.caption("Every node coloured by its cluster; grey = empty nodes, "
+                       "numbers = how many IDs are on each node.")
             show_fig(plots.plot_cluster_map(c.df_active, m.df_map,
                                             cluster_labels=cluster_labels))
         with sil_col:
             st.markdown("#### Silhouette quality")
+            st.caption("How well each node sits in its cluster (higher = better). "
+                       "Nodes left of the red cutoff are flagged as outliers.")
             show_fig(plots.plot_silhouette(c.df_active, cfg2.sil_cut))
 
         if len(se_cols):
             st.markdown("#### Homogeneity gain (I²)")
+            st.caption("The idionomic 'defensibility' view: within-cluster vs "
+                       "whole-sample heterogeneity (I²). Lower within-cluster I² "
+                       "means the partition removed real heterogeneity — evidence "
+                       "the groups are meaningful, not noise.")
             show_fig(plots.plot_homogeneity_gain(c, cfg2))
 
         st.markdown("#### Divergence analysis")
+        st.caption("For each cluster, the features where it differs most from the "
+                   "overall average — i.e. what makes that group distinctive.")
         dcols = st.columns(min(2, max(1, len(c.valid_clusters))))
         for i, cl in enumerate(c.valid_clusters):
             with dcols[i % len(dcols)]:
@@ -466,6 +501,12 @@ with tab2:
                 show_fig(plots.plot_divergence(cl, c, cfg2, label=lbl))
 
         st.markdown("#### Tables")
+        st.markdown(
+            "Publication-ready summaries of the clusters. **Summary** = the top "
+            "distinctive features per cluster for a main-text table; **Full "
+            "classification** = every feature tagged *Distinctive* vs *Standard* "
+            "(by importance × statistical unusualness); **Characteristics** = each "
+            "cluster's biggest features by magnitude and by divergence.")
         if not len(se_cols):
             st.caption("ℹ️ I² columns are hidden — this data has no `se_` "
                        "(standard-error) columns, so heterogeneity (I²) can't be "
@@ -486,6 +527,8 @@ with tab2:
 
         # -------- download everything as a ZIP --------
         st.markdown("#### Download results")
+        st.caption("One ZIP with every table (CSV) and figure (PNG) from this run, "
+                   "plus a parameters file — ready to drop into a paper or share.")
         zip_bytes = _build_zip(m, c, cfg2, se_cols)
         st.download_button("⬇️ Download all results (ZIP)", zip_bytes,
                            "gsom_results.zip", type="primary",
