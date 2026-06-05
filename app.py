@@ -388,36 +388,68 @@ with tab2:
     c = st.session_state.cluster
     if c is not None:
         cfg2 = st.session_state.get("cfg2", cfg2)
+        truth = st.session_state.get("sample_truth", {})
+
+        # Auto-name each cluster by its dominant known group (sample data only).
+        # e.g. {0: "Mammal (C0)"}. For real user data there are no labels -> None.
+        cluster_labels = None
+        if st.session_state.is_sample and truth:
+            cl_t = c.df_clusters.copy()
+            cl_t["g"] = cl_t["ID"].map(truth)
+            cluster_labels = {}
+            for cl in c.valid_clusters:
+                grp = cl_t[cl_t["cluster"] == cl]["g"].dropna()
+                name = grp.value_counts().index[0] if len(grp) else f"Cluster {cl}"
+                cluster_labels[int(cl)] = f"{name} (C{cl})"
+
+        def clab(i):
+            if i == -1:
+                return "Outliers"
+            return cluster_labels[int(i)] if cluster_labels else f"Cluster {i}"
+
         with right:
             counts = c.df_clusters["cluster"].value_counts().sort_index()
-            counts.index = ["Outliers" if i == -1 else f"Cluster {i}" for i in counts.index]
+            counts.index = [clab(i) for i in counts.index]
             st.markdown(f"**K = {c.best_k}**  ·  clusters: "
                         f"{', '.join(str(v) for v in c.valid_clusters)}  ·  "
                         f"outliers: {int((c.df_clusters['cluster'] == -1).sum())}")
             st.bar_chart(counts)
 
-        # For a sample with known labels, show how the GSOM groups recover them.
-        truth = st.session_state.get("sample_truth", {})
+        # For a sample with known labels: auto-names + recovery cross-tab.
         if st.session_state.is_sample and truth:
+            st.markdown("#### 🏷️ Auto-named clusters")
+            st.caption("Each cluster is named after its **dominant known group** "
+                       "(the GSOM never saw the labels). With your own data you'd "
+                       "name the clusters yourself; here it's automatic.")
+            name_rows = []
+            for cl in c.valid_clusters:
+                grp = c.df_clusters[c.df_clusters["cluster"] == cl]["ID"].map(truth).dropna()
+                top = grp.value_counts()
+                name_rows.append({"Cluster": f"C{cl}",
+                                  "Name": cluster_labels[int(cl)],
+                                  "Dominant group": f"{top.index[0]} ({top.iloc[0]}/{len(grp)})"})
+            st.dataframe(pd.DataFrame(name_rows), use_container_width=True, hide_index=True)
+
             xt = c.df_clusters.copy()
             xt["Known group"] = xt["ID"].map(truth)
             xt = xt.dropna(subset=["Known group"])
-            xt["Cluster"] = xt["cluster"].map(
-                lambda i: "Outliers" if i == -1 else f"Cluster {i}")
+            xt["Cluster"] = xt["cluster"].map(clab)
             recovery = pd.crosstab(xt["Known group"], xt["Cluster"])
             st.markdown("#### ✅ Recovery check — known group × GSOM cluster")
-            st.caption("The GSOM never saw these labels. Each known group landing "
-                       "mostly in its own cluster = the map found the real structure.")
+            st.caption("Each known group landing mostly in its own cluster = the "
+                       "map found the real structure from the features alone.")
             st.dataframe(recovery, use_container_width=True)
 
         st.markdown("#### Skeleton map with cluster topology")
         show_fig(plots.plot_skeleton_map(m.gsom_map, c.df_active, m.df_map,
-                                         c.df_profiles, cfg2.id_col))
+                                         c.df_profiles, cfg2.id_col,
+                                         cluster_labels=cluster_labels))
 
         cmap_col, sil_col = st.columns(2)
         with cmap_col:
             st.markdown("#### Cluster map")
-            show_fig(plots.plot_cluster_map(c.df_active, m.df_map))
+            show_fig(plots.plot_cluster_map(c.df_active, m.df_map,
+                                            cluster_labels=cluster_labels))
         with sil_col:
             st.markdown("#### Silhouette quality")
             show_fig(plots.plot_silhouette(c.df_active, cfg2.sil_cut))
@@ -430,7 +462,8 @@ with tab2:
         dcols = st.columns(min(2, max(1, len(c.valid_clusters))))
         for i, cl in enumerate(c.valid_clusters):
             with dcols[i % len(dcols)]:
-                show_fig(plots.plot_divergence(cl, c, cfg2))
+                lbl = cluster_labels[int(cl)] if cluster_labels else None
+                show_fig(plots.plot_divergence(cl, c, cfg2, label=lbl))
 
         st.markdown("#### Tables")
         t_a, t_b, t_c = st.tabs(["Summary (journal)", "Full classification",

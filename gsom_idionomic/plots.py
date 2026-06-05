@@ -127,8 +127,13 @@ def plot_node_map(gsom_map, df_map, max_label_ids=2):
 
 
 # ---------------------------------------------------------------- cluster map
-def plot_cluster_map(df_active, df_map):
-    """Color map of participant placement; empty nodes grey, winners coloured by cluster."""
+def plot_cluster_map(df_active, df_map, cluster_labels=None):
+    """Color map of participant placement; empty nodes grey, winners coloured by cluster.
+
+    cluster_labels : optional {cluster_id: name} -> legend shows names not numbers.
+    """
+    def _lab(cl):
+        return cluster_labels.get(int(cl), f"{int(cl)}") if cluster_labels else f"{int(cl)}"
     hit_counts = df_map.groupby("output")["ID"].nunique().to_dict()
     df = df_active.copy()
     df["n_people"] = df["nodeid"].map(hit_counts).fillna(0).astype(int)
@@ -150,7 +155,7 @@ def plot_cluster_map(df_active, df_map):
         cd = winners[winners.cluster == cl]
         if not cd.empty:
             ax.scatter(cd.x, cd.y, s=80, c=[pal[int(cl)]], edgecolor="black",
-                       linewidth=0.5, label=f"{int(cl)}")
+                       linewidth=0.5, label=_lab(cl))
     for _, row in winners.iterrows():
         ax.annotate(f"{int(row['n_people'])}", xy=(row["x"], row["y"]),
                     xytext=(6, 0), textcoords="offset points",
@@ -164,8 +169,12 @@ def plot_cluster_map(df_active, df_map):
 
 
 # ---------------------------------------------------------------- skeleton map
-def plot_skeleton_map(gsom_map, df_active, df_map, df_profiles, id_col="ID"):
-    """GSOM growth skeleton: parent-child edges, seed stars, cluster ellipses."""
+def plot_skeleton_map(gsom_map, df_active, df_map, df_profiles, id_col="ID",
+                      cluster_labels=None):
+    """GSOM growth skeleton: parent-child edges, seed stars, cluster ellipses.
+
+    cluster_labels : optional {cluster_id: name} -> ellipse labels show names.
+    """
     hit_counts = df_map.groupby("output")["ID"].nunique().to_dict()
 
     df_sk = gsom_map.skeleton_dataframe()
@@ -217,7 +226,8 @@ def plot_skeleton_map(gsom_map, df_active, df_map, df_profiles, id_col="ID"):
         ax.add_patch(Ellipse((cx, cy), width, height, facecolor="none",
                              edgecolor="black", linestyle="--", linewidth=1.0, zorder=2.5))
         n_in = len(df_profiles[df_profiles["cluster"] == cl])
-        txt = ax.text(cx - width / 2 - 0.3, cy, f"C{int(cl)} (n={n_in})",
+        lbl = cluster_labels.get(int(cl), f"C{int(cl)}") if cluster_labels else f"C{int(cl)}"
+        txt = ax.text(cx - width / 2 - 0.3, cy, f"{lbl} (n={n_in})",
                       fontsize=9, fontweight="bold", ha="right", va="center",
                       color="black", zorder=6)
         txt.set_path_effects([pe.Stroke(linewidth=3, foreground="white"), pe.Normal()])
@@ -281,8 +291,11 @@ def plot_silhouette(df_active, sil_cut):
 
 
 # ---------------------------------------------------------------- divergence
-def plot_divergence(cluster_num, cluster_result, config):
-    """Top-5 features where a cluster diverges most from the whole-sample mean."""
+def plot_divergence(cluster_num, cluster_result, config, label=None):
+    """Top-5 features where a cluster diverges most from the whole-sample mean.
+
+    label : optional cluster name shown in the title instead of 'Cluster N'.
+    """
     id_col = config.id_col
     df_clusters = cluster_result.df_clusters
     whole = cluster_result.whole_sample_mean
@@ -309,7 +322,8 @@ def plot_divergence(cluster_num, cluster_result, config):
     ax.set_yticks(y_pos)
     ax.set_yticklabels([shorten_feature(f) for f in top5], fontsize=10)
     ax.set_xlabel("Divergence from Sample Mean (Cluster - Sample)", fontsize=11)
-    ax.set_title(f"Cluster {cluster_num} Divergence Profile (n={len(cids)})\n"
+    title_lbl = label if label else f"Cluster {cluster_num}"
+    ax.set_title(f"{title_lbl} Divergence Profile (n={len(cids)})\n"
                  "Blue = cluster higher, Red = cluster lower",
                  fontsize=11, fontweight="bold")
     ax.grid(axis="x", alpha=0.3)
