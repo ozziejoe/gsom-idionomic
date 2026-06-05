@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: "gsom-idionomic: Growing Self-Organizing Map clustering for any feature-by-ID matrix"
-message: "If you use this software, please cite both the software (below) and the accompanying paper in 'preferred-citation'."
+message: "If you use this software, please cite it using the metadata below (these are the software's own authors). The related paper is listed separately under 'references'."
 type: software
 authors:
   - given-names: Joseph
@@ -41,36 +41,38 @@ keywords:
   - person-specific
   - ecological momentary assessment
   - clustering
-preferred-citation:
-  type: article
-  title: "Is problematic internet use always problematic? An experience-sampling study of compulsive and avoidance-driven internet behaviors and momentary mood"
-  authors:
-    - given-names: Joseph
-      family-names: Ciarrochi
-    - given-names: Cristóbal
-      family-names: Hernández
-    - given-names: Eman
-      family-names: Hamed
-    - given-names: Damminda
-      family-names: Alahakoon
-    - given-names: Achini
-      family-names: Adikari
-    - given-names: Keong
-      family-names: Yap
-    - given-names: Isuru
-      family-names: Ranapanada
-    - given-names: "Steven C."
-      family-names: Hayes
-    - given-names: "Madeleine I."
-      family-names: Fraser
-    - given-names: Baljinder
-      family-names: Sahdra
-  journal: "Psychology of Addictive Behaviors"
-  year: 2026
-  volume: 40
-  issue: 4
-  start: 422
-  end: 431
-  doi: "10.1037/adb0001142"
-  issn: "0893-164X"
-  license: CC-BY-4.0
+# The related paper is listed as a reference, NOT preferred-citation, so that
+# citing the software cites the software (its own authors above), not the paper.
+references:
+  - type: article
+    title: "Is problematic internet use always problematic? An experience-sampling study of compulsive and avoidance-driven internet behaviors and momentary mood"
+    authors:
+      - given-names: Joseph
+        family-names: Ciarrochi
+      - given-names: Cristóbal
+        family-names: Hernández
+      - given-names: Eman
+        family-names: Hamed
+      - given-names: Damminda
+        family-names: Alahakoon
+      - given-names: Achini
+        family-names: Adikari
+      - given-names: Keong
+        family-names: Yap
+      - given-names: Isuru
+        family-names: Ranapanada
+      - given-names: "Steven C."
+        family-names: Hayes
+      - given-names: "Madeleine I."
+        family-names: Fraser
+      - given-names: Baljinder
+        family-names: Sahdra
+    journal: "Psychology of Addictive Behaviors"
+    year: 2026
+    volume: 40
+    issue: 4
+    start: 422
+    end: 431
+    doi: "10.1037/adb0001142"
+    issn: "0893-164X"
+    license: CC-BY-4.0
