@@ -18,9 +18,9 @@ cavy,1,0,0,1,0,0,0,1,1,1,0,0,4,0,1,0,Mammal
 cheetah,1,0,0,1,0,0,1,1,1,1,0,0,4,1,0,1,Mammal
 chicken,0,1,1,0,1,0,0,0,1,1,0,0,2,1,1,0,Bird
 chub,0,0,1,0,0,1,1,1,1,0,0,1,0,1,0,0,Fish
-clam,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,Other invertebrate
-crab,0,0,1,0,0,1,1,0,0,0,0,0,4,0,0,0,Other invertebrate
-crayfish,0,0,1,0,0,1,1,0,0,0,0,0,6,0,0,0,Other invertebrate
+clam,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,Non-insect invertebrate
+crab,0,0,1,0,0,1,1,0,0,0,0,0,4,0,0,0,Non-insect invertebrate
+crayfish,0,0,1,0,0,1,1,0,0,0,0,0,6,0,0,0,Non-insect invertebrate
 crow,0,1,1,0,1,0,1,0,1,1,0,0,2,1,0,0,Bird
 deer,1,0,0,1,0,0,0,1,1,1,0,0,4,1,0,1,Mammal
 dogfish,0,0,1,0,0,1,1,1,1,0,0,1,0,1,0,1,Fish
@@ -51,14 +51,14 @@ ladybird,0,0,1,0,1,0,1,0,0,1,0,0,6,0,0,0,Insect
 lark,0,1,1,0,1,0,0,0,1,1,0,0,2,1,0,0,Bird
 leopard,1,0,0,1,0,0,1,1,1,1,0,0,4,1,0,1,Mammal
 lion,1,0,0,1,0,0,1,1,1,1,0,0,4,1,0,1,Mammal
-lobster,0,0,1,0,0,1,1,0,0,0,0,0,6,0,0,0,Other invertebrate
+lobster,0,0,1,0,0,1,1,0,0,0,0,0,6,0,0,0,Non-insect invertebrate
 lynx,1,0,0,1,0,0,1,1,1,1,0,0,4,1,0,1,Mammal
 mink,1,0,0,1,0,1,1,1,1,1,0,0,4,1,0,1,Mammal
 mole,1,0,0,1,0,0,1,1,1,1,0,0,4,1,0,0,Mammal
 mongoose,1,0,0,1,0,0,1,1,1,1,0,0,4,1,0,1,Mammal
 moth,1,0,1,0,1,0,0,0,0,1,0,0,6,0,0,0,Insect
 newt,0,0,1,0,0,1,1,1,1,1,0,0,4,1,0,0,Amphibian
-octopus,0,0,1,0,0,1,1,0,0,0,0,0,8,0,0,1,Other invertebrate
+octopus,0,0,1,0,0,1,1,0,0,0,0,0,8,0,0,1,Non-insect invertebrate
 opossum,1,0,0,1,0,0,1,1,1,1,0,0,4,1,0,0,Mammal
 oryx,1,0,0,1,0,0,0,1,1,1,0,0,4,1,0,1,Mammal
 ostrich,0,1,1,0,0,0,0,0,1,1,0,0,2,1,0,1,Bird
@@ -77,20 +77,20 @@ pussycat,1,0,0,1,0,0,1,1,1,1,0,0,4,1,1,1,Mammal
 raccoon,1,0,0,1,0,0,1,1,1,1,0,0,4,1,0,1,Mammal
 reindeer,1,0,0,1,0,0,0,1,1,1,0,0,4,1,1,1,Mammal
 rhea,0,1,1,0,0,0,1,0,1,1,0,0,2,1,0,1,Bird
-scorpion,0,0,0,0,0,0,1,0,0,1,1,0,8,1,0,0,Other invertebrate
+scorpion,0,0,0,0,0,0,1,0,0,1,1,0,8,1,0,0,Non-insect invertebrate
 seahorse,0,0,1,0,0,1,0,1,1,0,0,1,0,1,0,0,Fish
 seal,1,0,0,1,0,1,1,1,1,1,0,1,0,0,0,1,Mammal
 sealion,1,0,0,1,0,1,1,1,1,1,0,1,2,1,0,1,Mammal
 seasnake,0,0,0,0,0,1,1,1,1,0,1,0,0,1,0,0,Reptile
-seawasp,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0,0,Other invertebrate
+seawasp,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0,0,Non-insect invertebrate
 skimmer,0,1,1,0,1,1,1,0,1,1,0,0,2,1,0,0,Bird
 skua,0,1,1,0,1,1,1,0,1,1,0,0,2,1,0,0,Bird
 slowworm,0,0,1,0,0,0,1,1,1,1,0,0,0,1,0,0,Reptile
-slug,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,Other invertebrate
+slug,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,Non-insect invertebrate
 sole,0,0,1,0,0,1,0,1,1,0,0,1,0,1,0,0,Fish
 sparrow,0,1,1,0,1,0,0,0,1,1,0,0,2,1,0,0,Bird
 squirrel,1,0,0,1,0,0,0,1,1,1,0,0,2,1,0,0,Mammal
-starfish,0,0,1,0,0,1,1,0,0,0,0,0,5,0,0,0,Other invertebrate
+starfish,0,0,1,0,0,1,1,0,0,0,0,0,5,0,0,0,Non-insect invertebrate
 stingray,0,0,1,0,0,1,1,1,1,0,1,1,0,1,0,1,Fish
 swan,0,1,1,0,1,1,0,0,1,1,0,0,2,1,0,1,Bird
 termite,0,0,1,0,0,0,0,0,0,1,0,0,6,0,0,0,Insect
@@ -104,6 +104,6 @@ vulture,0,1,1,0,1,0,1,0,1,1,0,0,2,1,0,1,Bird
 wallaby,1,0,0,1,0,0,0,1,1,1,0,0,2,1,0,1,Mammal
 wasp,1,0,1,0,1,0,0,0,0,1,1,0,6,0,0,0,Insect
 wolf,1,0,0,1,0,0,1,1,1,1,0,0,4,1,0,1,Mammal
-worm,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,Other invertebrate
+worm,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,Non-insect invertebrate
 wren,0,1,1,0,1,0,0,0,1,1,0,0,2,1,0,0,Bird
 """
