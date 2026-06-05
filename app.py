@@ -466,14 +466,23 @@ with tab2:
                 show_fig(plots.plot_divergence(cl, c, cfg2, label=lbl))
 
         st.markdown("#### Tables")
+        if not len(se_cols):
+            st.caption("ℹ️ I² columns are hidden — this data has no `se_` "
+                       "(standard-error) columns, so heterogeneity (I²) can't be "
+                       "computed. Add `se_*` columns to enable it.")
+
+        def _show_table(df_t):
+            # drop columns that are entirely empty (e.g. I² when there are no se_)
+            st.dataframe(df_t.dropna(axis=1, how="all"), use_container_width=True)
+
         t_a, t_b, t_c = st.tabs(["Summary (journal)", "Full classification",
                                  "Characteristics"])
         with t_a:
-            st.dataframe(c.df_summary_table, use_container_width=True)
+            _show_table(c.df_summary_table)
         with t_b:
-            st.dataframe(c.df_classification, use_container_width=True)
+            _show_table(c.df_classification)
         with t_c:
-            st.dataframe(c.df_characteristics, use_container_width=True)
+            _show_table(c.df_characteristics)
 
         # -------- download everything as a ZIP --------
         st.markdown("#### Download results")
