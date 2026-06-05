@@ -12,6 +12,7 @@ Runs three ways from this one file:
 """
 
 import io
+import os
 import zipfile
 
 import matplotlib
@@ -208,6 +209,38 @@ st.markdown(
     "self-organizing map of your rows, then optionally **② cluster** that map and "
     "characterise the groups it reveals. (Built for *idionomic* data — rows = "
     "people, features = within-person coefficients — but works on any numeric features.)")
+
+# ---- citations / links (always shown at the top) ----
+GITHUB_URL = "https://github.com/ozziejoe/gsom-idionomic"
+PAPER_DOI = "https://doi.org/10.1037/adb0001142"
+PAPER_PDF = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         "paper", "Ciarrochi-et-al-2026-Psychology-of-Addictive-Behaviors.pdf")
+PAPER_PDF_RAW = (GITHUB_URL + "/raw/main/paper/"
+                 "Ciarrochi-et-al-2026-Psychology-of-Addictive-Behaviors.pdf")
+
+st.markdown(f"📦 [**Source code**]({GITHUB_URL})  ·  "
+            f"📄 [**Paper**]({PAPER_DOI}) (open access, CC BY 4.0)  ·  "
+            f"⬇️ [**Download the paper (PDF)**]({PAPER_PDF_RAW})")
+with st.expander("📚 How to cite"):
+    st.markdown(
+        "**This tool (software):**  \n"
+        "Ciarrochi, J., Alahakoon, D., Hernández Contreras, C. E., Sahdra, B., "
+        "Ong, C., & Hayes, S. C. (2026). *gsom-idionomic: Growing Self-Organizing "
+        "Map clustering for any feature-by-ID matrix* (v0.1.0) [Computer software]. "
+        f"{GITHUB_URL}")
+    st.markdown(
+        "**The accompanying paper (open access, CC BY 4.0):**  \n"
+        "Ciarrochi, J., Hernández, C., Hamed, E., Alahakoon, D., Adikari, A., "
+        "Yap, K., Ranapanada, I., Hayes, S. C., Fraser, M. I., & Sahdra, B. (2026). "
+        "Is problematic internet use always problematic? An experience-sampling "
+        "study of compulsive and avoidance-driven internet behaviors and momentary "
+        f"mood. *Psychology of Addictive Behaviors, 40*(4), 422–431. {PAPER_DOI}")
+    try:  # a true download button when the PDF is on disk (hosted app)
+        with open(PAPER_PDF, "rb") as _f:
+            st.download_button("⬇️ Download the paper (PDF)", _f.read(),
+                               "Ciarrochi-et-al-2026-PIU.pdf", mime="application/pdf")
+    except Exception:
+        st.markdown(f"[⬇️ Download the paper (PDF)]({PAPER_PDF_RAW})")
 
 if st.session_state.data is None:
     st.info("⬅️ Pick a **sample dataset** in the sidebar and click **Use sample "

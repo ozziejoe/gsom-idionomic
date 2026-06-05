@@ -12,9 +12,9 @@ cavy,Mammal
 cheetah,Mammal
 chicken,Bird
 chub,Fish
-clam,Invertebrate
-crab,Invertebrate
-crayfish,Invertebrate
+clam,Other invertebrate
+crab,Other invertebrate
+crayfish,Other invertebrate
 crow,Bird
 deer,Mammal
 dogfish,Fish
@@ -45,14 +45,14 @@ ladybird,Insect
 lark,Bird
 leopard,Mammal
 lion,Mammal
-lobster,Invertebrate
+lobster,Other invertebrate
 lynx,Mammal
 mink,Mammal
 mole,Mammal
 mongoose,Mammal
 moth,Insect
 newt,Amphibian
-octopus,Invertebrate
+octopus,Other invertebrate
 opossum,Mammal
 oryx,Mammal
 ostrich,Bird
@@ -71,20 +71,20 @@ pussycat,Mammal
 raccoon,Mammal
 reindeer,Mammal
 rhea,Bird
-scorpion,Invertebrate
+scorpion,Other invertebrate
 seahorse,Fish
 seal,Mammal
 sealion,Mammal
 seasnake,Reptile
-seawasp,Invertebrate
+seawasp,Other invertebrate
 skimmer,Bird
 skua,Bird
 slowworm,Reptile
-slug,Invertebrate
+slug,Other invertebrate
 sole,Fish
 sparrow,Bird
 squirrel,Mammal
-starfish,Invertebrate
+starfish,Other invertebrate
 stingray,Fish
 swan,Bird
 termite,Insect
@@ -98,5 +98,5 @@ vulture,Bird
 wallaby,Mammal
 wasp,Insect
 wolf,Mammal
-worm,Invertebrate
+worm,Other invertebrate
 wren,Bird
