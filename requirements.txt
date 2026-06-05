@@ -1,0 +1,9 @@
+# Runtime dependencies for the Streamlit app and the gsom_idionomic engine.
+# (For the in-browser stlite build these are listed in index.html instead.)
+streamlit>=1.30
+numpy>=1.23
+scipy>=1.9
+pandas>=1.5
+scikit-learn>=1.2
+matplotlib>=3.6
+bigtree>=0.18

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GSOM Idionomic Clustering</title>
+    <meta name="description"
+          content="Growing Self-Organizing Map clustering for idionomic analysis — runs entirely in your browser; your data never leaves your computer." />
+
+    <!-- stlite: Streamlit compiled to WebAssembly (Pyodide). Runs app.py fully
+         client-side, so uploaded data never leaves the user's machine. -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.76.0/build/style.css" />
+    <style>
+      html, body { margin: 0; height: 100%; }
+      #root { height: 100%; }
+      #boot {
+        font-family: -apple-system, system-ui, sans-serif;
+        max-width: 640px; margin: 12vh auto; padding: 0 1.5rem; color: #333;
+      }
+      #boot h1 { font-size: 1.4rem; }
+      #boot .spin {
+        display: inline-block; width: 1rem; height: 1rem; border: 2px solid #ccc;
+        border-top-color: #555; border-radius: 50%; animation: s 0.8s linear infinite;
+        vertical-align: middle; margin-right: 0.5rem;
+      }
+      @keyframes s { to { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="boot">
+        <h1><span class="spin"></span>Loading GSOM Idionomic Clustering…</h1>
+        <p>First load downloads the Python scientific stack (~30&nbsp;MB) and may
+           take 20–40&nbsp;seconds. After that it is cached. Everything then runs
+           <strong>entirely in your browser</strong> — your data never leaves your
+           computer.</p>
+      </div>
+    </div>
+
+    <script type="module">
+      import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.76.0/build/stlite.js";
+
+      mount(
+        {
+          requirements: [
+            "numpy", "scipy", "pandas", "scikit-learn", "matplotlib", "bigtree",
+          ],
+          entrypoint: "app.py",
+          // Files are served as static assets next to this page and pulled into
+          // the in-browser Python filesystem. Keeps index.html small and lets the
+          // same .py files power `streamlit run app.py` locally and Colab.
+          files: {
+            "app.py": { url: "./app.py" },
+            "gsom_idionomic/__init__.py": { url: "./gsom_idionomic/__init__.py" },
+            "gsom_idionomic/gsom.py": { url: "./gsom_idionomic/gsom.py" },
+            "gsom_idionomic/pipeline.py": { url: "./gsom_idionomic/pipeline.py" },
+            "gsom_idionomic/plots.py": { url: "./gsom_idionomic/plots.py" },
+            "gsom_idionomic/demo.py": { url: "./gsom_idionomic/demo.py" },
+          },
+        },
+        document.getElementById("root"),
+      );
+    </script>
+  </body>
+</html>

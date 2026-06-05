@@ -1,0 +1,23 @@
+# Netlify config for the in-browser (stlite) build.
+# No build step — the site is static files (index.html + app.py + gsom_idionomic/).
+# stlite/Pyodide loads the Python stack in the browser at runtime.
+
+[build]
+  publish = "."
+  command = ""
+
+# Pyodide/stlite run best with cross-origin isolation enabled (allows
+# SharedArrayBuffer). jsDelivr (where the stlite runtime is served from) sends
+# CORP/ACAO headers, so it still loads under COEP: require-corp.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+
+# Make sure the Python source is fetched as text, never executed/redirected.
+[[headers]]
+  for = "/*.py"
+  [headers.values]
+    Content-Type = "text/x-python; charset=utf-8"
+    Cross-Origin-Resource-Policy = "same-origin"

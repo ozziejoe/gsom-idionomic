@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gsom-idionomic"
+version = "0.1.0"
+description = "Growing Self-Organizing Map (GSOM) clustering for idionomic analysis"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Joseph Ciarrochi" }]
+keywords = ["GSOM", "self-organizing-map", "idionomic", "clustering",
+            "EMA", "psychology", "person-specific"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "numpy>=1.23",
+    "scipy>=1.9",
+    "pandas>=1.5",
+    "scikit-learn>=1.2",
+    "matplotlib>=3.6",
+    "bigtree>=0.18",
+]
+
+[project.optional-dependencies]
+app = ["streamlit>=1.30"]
+
+[project.urls]
+Homepage = "https://github.com/ozziejoe/gsom-idionomic"
+
+[tool.setuptools]
+packages = ["gsom_idionomic"]

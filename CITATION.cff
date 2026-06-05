@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "gsom-idionomic: Growing Self-Organizing Map clustering for idionomic analysis"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: Ciarrochi
+    given-names: Joseph
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/ozziejoe/gsom-idionomic"
+abstract: >
+  An open, easy-to-use implementation of Growing Self-Organizing Map (GSOM)
+  clustering for any matrix of features keyed by an ID. It grows and tunes a
+  GSOM -- selecting the spread factor by quantization error and topology
+  preservation -- then clusters the resulting map, flags poorly-fitting nodes as
+  outliers, and characterises the groups it reveals. Built for idionomic analysis
+  (rows = people, features = within-person AR / cross-lagged coefficients), where
+  it reports within-cluster heterogeneity (I-squared) reduction as the
+  defensibility metric; but it applies to any numeric feature matrix. Distributed
+  as a Python package, an interactive Streamlit app, and a fully in-browser tool.
+keywords:
+  - GSOM
+  - self-organizing map
+  - idionomic
+  - person-specific
+  - ecological momentary assessment
+  - clustering
